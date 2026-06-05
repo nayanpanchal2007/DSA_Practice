@@ -47,7 +47,5 @@ int main() {
     int result = calculate(s);
 
     cout << "Result = " << result << endl;
-
-
     return 0;
 }
