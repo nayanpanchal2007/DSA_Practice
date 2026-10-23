@@ -1,46 +1,41 @@
-#include <iostream>
-#include <stack>
+#include <bits/stdc++.h>
+#include <print>
 using namespace std;
 
-bool is_operator(char c) {
-    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
+int precedence(char& ch) {
+    if (ch == '^') return 3;
+    else if (ch == '*' || ch == '/') return 2;
+    else if (ch == '+' || ch == '-') return 1;
+    else return 0;
 }
 
-int precedence(char c) {
-    if (c == '^') {
-        return 3;
-    } else if (c == '*' || c == '/') {
-        return 2;
-    } else if (c == '+' || c == '-') {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-string infix_to_postfix(string infix) {
+string infix_to_postfix(string& infix) {
     string postfix = "";
     stack<char> st;
 
-    for (char c : infix) {
-        if (isalnum(c)) {
-            postfix += c;
-        } else if (c == '(') {
-            st.push(c);
-        } else if (c == ')') {
+    for (char& ch : infix) {
+        if (isspace(ch)) continue;
+               
+        if (isalnum(ch)) {
+            postfix += ch;
+        } else if (ch == '(') {
+            st.push(ch);
+        } else if (ch == ')') {
             while (!st.empty() && st.top() != '(') {
                 postfix += st.top();
                 st.pop();
             }
-            
-            st.pop(); 
-        } else if (is_operator(c)) {
-            while (!st.empty() && precedence(st.top()) >= precedence(c)) {
+
+            if (!st.empty()) st.pop();
+        } else {
+            while (!st.empty() && st.top() != '(' &&
+                    (precedence(st.top()) > precedence(ch) || 
+                    (precedence(st.top()) == precedence(ch) && ch != '^'))) {
                 postfix += st.top();
                 st.pop();
             }
 
-            st.push(c);
+            st.push(ch);
         }
     }
 
@@ -54,11 +49,10 @@ string infix_to_postfix(string infix) {
 
 int main() {
     string infix;
-    cout << "Enter a infix expression: ";
+    cout << "Enter infix expression: ";
     getline(cin, infix);
 
     string postfix = infix_to_postfix(infix);
-
-    cout << "Postfix expression: " << postfix << endl;
+    cout << "Postfix expression: " << postfix << "\n";
     return 0;
 }
